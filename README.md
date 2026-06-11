@@ -6,7 +6,7 @@ A steering visualization application for Assetto Corsa. Allows users to see thei
 - Adjustable maximum angle and steering sensitivity scalar
 - Adjustable hud size and opacity
 - Multiple theme support
-- Supports usser-created themes
+- Supports user-created themes
 
 ## Requirements
 - Assetto Corsa
@@ -41,4 +41,4 @@ The app uses "User max angle" to define the maximum steering angle from lock-to-
 This is a small limitation with the ac and acsys Python Libraries, as well as the Assetto Corsa Shared Memory library. None of these have the ability to retrieve the maximum steering angle from the vehicle you're using. Had this been the case, updating the maximum angle could happen automatically.
 
 ## License Info
-This project is obtainable under the provided MIT License. See ["LICENSE.txt"](LICENSE.txt) for more info.
+This project is obtainable under the provided GNU GPLv3 License. See ["LICENSE.txt"](LICENSE.txt) for more info.
