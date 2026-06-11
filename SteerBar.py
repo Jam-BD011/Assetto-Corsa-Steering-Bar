@@ -3,6 +3,10 @@ import acsys
 import math
 import os
 
+#Author: Jam-BD011
+#MIT License
+#Assetto Corsa Steering Bar App
+
 # =========================================================
 # APPS
 # =========================================================
@@ -101,14 +105,17 @@ def load_config():
     global WINDOW_SCALE
     global CURRENT_THEME
 
+    #try and load config settings from cofig path
     try:
         with open(CONFIG_PATH, "r") as f:
 
             for line in f:
 
+                #only look for assigned values
                 if "=" not in line:
                     continue
 
+                #k=attribute, v=value for attribute
                 k, v = line.split("=")
 
                 k = k.strip()
@@ -132,6 +139,7 @@ def load_config():
                 elif k == "THEME":
                     CURRENT_THEME = v
 
+    #fallback settings
     except:
         USER_MAX_ANGLE = 900.0
         STEER_SCALE = 2.0
@@ -150,6 +158,7 @@ def scan_themes():
 
     THEMES = []
 
+    #try and get themes from theme root path
     try:
         for folder in os.listdir(THEME_ROOT):
 
@@ -172,6 +181,7 @@ def load_theme():
 
     themePath = THEME_ROOT + CURRENT_THEME + "/"
 
+    #every themes uses bar.png and dot.png
     barTexture = ac.newTexture(themePath + "bar.png")
     dotTexture = ac.newTexture(themePath + "dot.png")
 
@@ -229,9 +239,11 @@ def update_labels():
 # SETTINGS BUTTONS
 # =========================================================
 
-def clamp01(x):
+#clamp for bar and dot opacity
+def clamp(x):
     return max(0.0, min(1.0, x))
 
+#reduce max angle
 def angle_minus(*args):
     global USER_MAX_ANGLE
 
@@ -240,7 +252,7 @@ def angle_minus(*args):
     update_labels()
     save_config()
 
-
+#increase max angle
 def angle_plus(*args):
     global USER_MAX_ANGLE
 
@@ -249,7 +261,7 @@ def angle_plus(*args):
     update_labels()
     save_config()
 
-
+#reduce steering scalar
 def scale_minus(*args):
     global STEER_SCALE
 
@@ -259,7 +271,7 @@ def scale_minus(*args):
     save_config()
 
 
-
+#increase setting scalar
 def scale_plus(*args):
     global STEER_SCALE
 
@@ -269,7 +281,7 @@ def scale_plus(*args):
     save_config()
 
 
-
+#reduce window size
 def size_minus(*args):
     global WINDOW_SCALE
 
@@ -280,34 +292,7 @@ def size_minus(*args):
     update_labels()
     save_config()
 
-def bar_opacity_minus(*args):
-    global BAR_OPACITY
-    BAR_OPACITY = clamp01(BAR_OPACITY - 0.1)
-    update_labels()
-    save_config()
-    
-
-def bar_opacity_plus(*args):
-    global BAR_OPACITY
-    BAR_OPACITY = clamp01(BAR_OPACITY + 0.1)
-    update_labels()
-    save_config()
-
-
-def dot_opacity_minus(*args):
-    global DOT_OPACITY
-    DOT_OPACITY = clamp01(DOT_OPACITY - 0.1)
-    update_labels()
-    save_config()
-
-
-def dot_opacity_plus(*args):
-    global DOT_OPACITY
-    DOT_OPACITY = clamp01(DOT_OPACITY + 0.1)
-    update_labels()
-    save_config()
-
-
+#increase window size
 def size_plus(*args):
     global WINDOW_SCALE
 
@@ -318,11 +303,39 @@ def size_plus(*args):
     update_labels()
     save_config()
 
+#reduce bar opacity
+def bar_opacity_minus(*args):
+    global BAR_OPACITY
+    BAR_OPACITY = clamp(BAR_OPACITY - 0.1)
+    update_labels()
+    save_config()
+    
+#increase bar opacity
+def bar_opacity_plus(*args):
+    global BAR_OPACITY
+    BAR_OPACITY = clamp(BAR_OPACITY + 0.1)
+    update_labels()
+    save_config()
+
+#decrease dot opacity
+def dot_opacity_minus(*args):
+    global DOT_OPACITY
+    DOT_OPACITY = clamp(DOT_OPACITY - 0.1)
+    update_labels()
+    save_config()
+
+#increase dot opacity
+def dot_opacity_plus(*args):
+    global DOT_OPACITY
+    DOT_OPACITY = clamp(DOT_OPACITY + 0.1)
+    update_labels()
+    save_config()
+
 # =========================================================
 # THEME SWITCHING
 # =========================================================
 
-
+#go to next themne
 def next_theme(*args):
     global themeIndex
     global CURRENT_THEME
@@ -340,6 +353,10 @@ def next_theme(*args):
 
     save_config()
 
+#previous theme switching not currently working. indexing issue i think? removed for now
+#not a big deal but somewhat annoying
+
+#create the setup settings menu
 def setup_settings_ui():
     global angleLabel
     global scaleLabel
@@ -371,6 +388,7 @@ def setup_settings_ui():
     dotOpacityLabel = ac.addLabel(settingsApp, "")
     ac.setPosition(dotOpacityLabel, 20, 320)
     
+    #just in case theme switching doesnt work, you'd need to back out and go back in
     restartLabel = ac.addLabel(
         settingsApp,
         "Theme changes may require restart"
@@ -487,6 +505,7 @@ def acMain(ac_version):
     # BAR APP
     # =====================================================
 
+    #bar app window
     barApp = ac.newApp("Steer Bar")
 
     ac.setSize(barApp, 800, 100)
@@ -502,6 +521,7 @@ def acMain(ac_version):
     # SETTINGS APP
     # =====================================================
 
+    #settings app window
     settingsApp = ac.newApp("Steer Bar Settings")
 
     ac.setSize(settingsApp, 320, 400)
@@ -543,15 +563,21 @@ def onFormRender(deltaT):
     #find bar center
     centerX = BAR_X + BAR_WIDTH / 2
 
-    #apply steering scale + clamp
+    #apply smoothing, then mulitply by the desired scalar
+    #make sure the dot cant move beyond the bar using max
     steer = steerSmooth * STEER_SCALE
     steer = max(-1.0, min(1.0, steer))
 
-    #map to bar travel
+    #find max distance the dot can travel across the bar
+    #subtract dot size to make sure dot stays within bar length
     travel = (BAR_WIDTH - DOT_SIZE) / 2
 
+    #convert normalized steering value into relevant screen position
+    #position = center + offset
+    #offset = steer * travel
     dotX = centerX + steer * travel
 
+    #set bar opacity
     ac.glColor4f(1, 1, 1, BAR_OPACITY)
     
     #draw bar
@@ -563,6 +589,7 @@ def onFormRender(deltaT):
         barTexture
     )
 
+    #set dot opacity
     ac.glColor4f(1, 1, 1, DOT_OPACITY)
 
     #draw dot
