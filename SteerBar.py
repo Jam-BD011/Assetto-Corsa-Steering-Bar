@@ -119,6 +119,8 @@ def load_config():
     global STEER_SCALE
     global WINDOW_SCALE
     global CURRENT_THEME
+    global BAR_OPACITY
+    global DOT_OPACITY
 
     #try and load config settings from cofig path
     try:
