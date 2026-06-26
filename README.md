@@ -20,7 +20,7 @@ A steering visualization application for Assetto Corsa. Allows users to see thei
 # Installation
 **⚠️Content Manager is _highly_ recommended!**
 
-1.) On the "Releases" page, download ``SteerBar.zip``
+1.) On the "Releases" page, download ``SteerBar.zip`` from the latest stable release
 
 2.) Drag-and-drop ``SteerBar.zip`` onto an open instance of Content Manager. Using the Content Management Section, Install ``SteerBar.zip``.
 
