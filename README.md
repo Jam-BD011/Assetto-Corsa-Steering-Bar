@@ -82,6 +82,10 @@ The app uses "User max angle" to define the maximum steering angle from lock-to-
 
 This is a small limitation with the ac and acsys Python Libraries, as well as the Assetto Corsa Shared Memory library. None of these have the ability to retrieve the maximum steering angle from the vehicle you're using. Had this been the case, updating the maximum angle could happen automatically.
 
+## Update Log
+***25th June 2026***
+- **FIX**: Bar and Dot opacity are now properly saved on game exit
+
 ## Questions, Comments?
 If there's anything you'd like to ask or discuss, please feel free to start a discussion here on GitHub, or contact me through my Discord. My username is `spartantracker`.
 ## License Info
