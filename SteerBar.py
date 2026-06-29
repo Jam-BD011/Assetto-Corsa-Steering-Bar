@@ -44,6 +44,8 @@ dotOpacityLabel = 0
 
 CONFIG_PATH = "apps/python/SteerBar/config.ini"
 THEME_ROOT = "apps/python/SteerBar/themes/"
+#for later
+#STEER_PATH = "apps/lua/steerget/steerlock.txt"
 
 # =========================================================
 # SETTINGS
@@ -62,6 +64,12 @@ CURRENT_THEME = "Base"
 
 BAR_X = 0
 BAR_Y = 50
+
+BASE_WINDOW_WIDTH = 800
+BASE_WINDOW_HEIGHT = 100
+
+WINDOW_WIDTH = BASE_WINDOW_WIDTH
+WINDOW_HEIGHT = BASE_WINDOW_HEIGHT
 
 BASE_BAR_WIDTH = 800
 BASE_BAR_HEIGHT = 20
@@ -211,6 +219,10 @@ def update_hud_scale():
     global BAR_WIDTH
     global BAR_HEIGHT
     global DOT_SIZE
+    global WINDOW_WIDTH
+    global WINDOW_HEIGHT
+
+    ac.setSize(barApp, (WINDOW_WIDTH * WINDOW_SCALE), (WINDOW_HEIGHT * WINDOW_SCALE))
 
     BAR_WIDTH = BASE_BAR_WIDTH * WINDOW_SCALE
     BAR_HEIGHT = BASE_BAR_HEIGHT * WINDOW_SCALE
@@ -525,7 +537,7 @@ def acMain(ac_version):
     #bar app window
     barApp = ac.newApp("Steer Bar")
 
-    ac.setSize(barApp, 800, 100)
+    ac.setSize(barApp, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)
 
     ac.setTitle(barApp, "")
 
@@ -545,15 +557,7 @@ def acMain(ac_version):
 
     setup_settings_ui()
 
-    # =====================================================
-    # LOAD THEME
-    # =====================================================
-
     load_theme()
-
-    # =====================================================
-    # RENDER CALLBACK
-    # =====================================================
 
     ac.addRenderCallback(barApp, onFormRender)
 
