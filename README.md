@@ -80,7 +80,9 @@ The app uses "User max angle" to define the maximum steering angle from lock-to-
 
 ***⚠️Once again, the app cannot automatically detect and update the max angle of the wheel or vehicle you're using. It will need to be changed manually for each car to most accurately reflect the lock-to-lock value.***
 
-This is a small limitation with the ac and acsys Python Libraries, as well as the Assetto Corsa Shared Memory library. None of these have the ability to retrieve the maximum steering angle from the vehicle you're using. Had this been the case, updating the maximum angle could happen automatically.
+This is a small limitation with the ac and acsys Python Libraries, as well as the Assetto Corsa Shared Memory library. None of these have the ability to retrieve the maximum steering angle from the vehicle you're using.\
+**However...**\
+Custom Shader's Patch's Lua SDK _does_ come with a way to retrieve steering lock. Stay tuned for an important update for this app later!
 
 ## Update Log
 ***28th June 2026***
