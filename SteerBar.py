@@ -537,7 +537,7 @@ def acMain(ac_version):
     #bar app window
     barApp = ac.newApp("Steer Bar")
 
-    ac.setSize(barApp, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)
+    ac.setSize(barApp, (BASE_WINDOW_WIDTH * WINDOW_SCALE), (BASE_WINDOW_HEIGHT * WINDOW_SCALE))
 
     ac.setTitle(barApp, "")
 
