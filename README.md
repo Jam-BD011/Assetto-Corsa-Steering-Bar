@@ -82,7 +82,7 @@ The app uses "User max angle" to define the maximum steering angle from lock-to-
 
 This is a small limitation with the ac and acsys Python Libraries, as well as the Assetto Corsa Shared Memory library. None of these have the ability to retrieve the maximum steering angle from the vehicle you're using.\
 **However...**\
-Custom Shader's Patch's Lua SDK _does_ come with a way to retrieve steering lock. Stay tuned for an important update for this app later!
+Custom Shader's Patch's Lua SDK _does_ come with a way to retrieve steering lock. Big shoutout to [zibed1991's Steering Indicator](https://www.overtake.gg/downloads/xsteer_indicator.84656/) app for giving me the inspiration and helping me discover the Lua SDK. Be sure to check out their app too, and stay tuned for an important update for this app later!
 
 ## Update Log
 ***28th June 2026***
