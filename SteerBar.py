@@ -44,8 +44,7 @@ dotOpacityLabel = 0
 
 CONFIG_PATH = "apps/python/SteerBar/config.ini"
 THEME_ROOT = "apps/python/SteerBar/themes/"
-#for later
-#STEER_PATH = "apps/lua/steerget/steerlock.txt"
+STEER_PATH = "apps/lua/steerget/steerlock.txt"
 
 # =========================================================
 # SETTINGS
@@ -57,6 +56,7 @@ WINDOW_SCALE = 1.0
 BAR_OPACITY = 1.0
 DOT_OPACITY = 1.0
 CURRENT_THEME = "Base"
+last_mtime = 0
 
 # =========================================================
 # HUD
@@ -110,8 +110,6 @@ restartLabel = 0
 def save_config():
     try:
         with open(CONFIG_PATH, "w") as f:
-            f.write("USER_MAX_ANGLE=" + str(USER_MAX_ANGLE) + "\n")
-            f.write("STEER_SCALE=" + str(STEER_SCALE) + "\n")
             f.write("WINDOW_SCALE=" + str(WINDOW_SCALE) + "\n")
             f.write("BAR_OPACITY=" + str(BAR_OPACITY) + "\n")
             f.write("DOT_OPACITY=" + str(DOT_OPACITY) + "\n")
@@ -123,8 +121,6 @@ def save_config():
 
 #attempt to load current config settings
 def load_config():
-    global USER_MAX_ANGLE
-    global STEER_SCALE
     global WINDOW_SCALE
     global CURRENT_THEME
     global BAR_OPACITY
@@ -146,13 +142,7 @@ def load_config():
                 k = k.strip()
                 v = v.strip()
 
-                if k == "USER_MAX_ANGLE":
-                    USER_MAX_ANGLE = float(v)
-
-                elif k == "STEER_SCALE":
-                    STEER_SCALE = float(v)
-
-                elif k == "WINDOW_SCALE":
+                if k == "WINDOW_SCALE":
                     WINDOW_SCALE = float(v)
 
                 elif k == "BAR_OPACITY":
@@ -163,15 +153,49 @@ def load_config():
 
                 elif k == "THEME":
                     CURRENT_THEME = v
-
     #fallback settings
     except:
-        USER_MAX_ANGLE = 900.0
-        STEER_SCALE = 2.0
         WINDOW_SCALE = 1.0
         BAR_OPACITY = 1.0
         DOT_OPACITY = 1.0
         CURRENT_THEME = "Base"
+
+#get the current steering lock from the lua app file
+def load_steer_lock():
+    global USER_MAX_ANGLE
+
+    try:
+        ac.log("Reading steer file: " + STEER_PATH)
+        with open(STEER_PATH, "r") as f:
+            USER_MAX_ANGLE = float(f.read().strip())
+
+    except Exception as e:
+        USER_MAX_ANGLE = 900.0
+        ac.log("Failed to read steerlock.txt: " + str(e))
+
+#check if the steer lock file has been changed 
+def update_steer_lock():
+    global USER_MAX_ANGLE
+    global last_mtime
+
+    try:
+        #get the last modified time of the file
+        mtime = os.path.getmtime(STEER_PATH)
+
+        #if times are different, file has been modified by lua app
+        #the steering lock may be different, so lets grab it
+        #if modified times are the same, then the steering lock is still the same and theres no reason to update it
+        if mtime != last_mtime:
+            last_mtime = mtime
+
+            with open(STEER_PATH, "r") as f:
+                USER_MAX_ANGLE = float(f.read().strip())
+
+            ac.log("Updated steer lock: " + str(USER_MAX_ANGLE))
+            update_labels()
+
+    except Exception as e:
+        ac.log(str(e))
 
 # =========================================================
 # THEME SCANNING
@@ -235,14 +259,10 @@ def update_hud_scale():
 #update labelss to reflect user changes
 def update_labels():
 
+    
     ac.setText(
         angleLabel,
-        "Max Angle: " + str(int(USER_MAX_ANGLE))
-    )
-
-    ac.setText(
-        scaleLabel,
-        "Steer Scale: " + str(round(STEER_SCALE, 2))
+        "Max Angle: " + str((USER_MAX_ANGLE))
     )
 
     ac.setText(
@@ -272,49 +292,11 @@ def update_labels():
 def clamp(x):
     return max(0.0, min(1.0, x))
 
-#reduce max angle
-def angle_minus(*args):
-    global USER_MAX_ANGLE
-
-    USER_MAX_ANGLE = max(180, USER_MAX_ANGLE - 10)
-
-    update_labels()
-    save_config()
-
-#increase max angle
-def angle_plus(*args):
-    global USER_MAX_ANGLE
-
-    USER_MAX_ANGLE = min(1440, USER_MAX_ANGLE + 10)
-
-    update_labels()
-    save_config()
-
-#reduce steering scalar
-def scale_minus(*args):
-    global STEER_SCALE
-
-    STEER_SCALE = max(0.1, STEER_SCALE - 0.1)
-
-    update_labels()
-    save_config()
-
-
-#increase setting scalar
-def scale_plus(*args):
-    global STEER_SCALE
-
-    STEER_SCALE += 0.1
-
-    update_labels()
-    save_config()
-
-
 #reduce window size
 def size_minus(*args):
     global WINDOW_SCALE
 
-    WINDOW_SCALE = max(0.25, WINDOW_SCALE - 0.1)
+    WINDOW_SCALE = max(0.1, WINDOW_SCALE - 0.1)
 
     update_hud_scale()
 
@@ -399,58 +381,37 @@ def setup_settings_ui():
     # LABELS
     # -------------------------
 
-    angleLabel = ac.addLabel(settingsApp, "")
-    ac.setPosition(angleLabel, 20, 20)
+    angleLabel = ac.addLabel(settingsApp, "Max Angle: " + str(USER_MAX_ANGLE))
+    ac.setPosition(angleLabel, 20, 40)
 
-    scaleLabel = ac.addLabel(settingsApp, "")
-    ac.setPosition(scaleLabel, 20, 80)
+    themeLabel = ac.addLabel(settingsApp, "")
+    ac.setPosition(themeLabel, 20, 80)
+
+    #just in case theme switching doesnt work, you'd need to back out and go back in
+    restartLabel = ac.addLabel(
+        settingsApp,
+        "Theme changes MAY require restart"
+    )
+    ac.setPosition(restartLabel, 20, 110)
 
     sizeLabel = ac.addLabel(settingsApp, "")
     ac.setPosition(sizeLabel, 20, 140)
 
-    themeLabel = ac.addLabel(settingsApp, "")
-    ac.setPosition(themeLabel, 20, 200)
-
     barOpacityLabel = ac.addLabel(settingsApp, "")
-    ac.setPosition(barOpacityLabel, 20, 260)
+    ac.setPosition(barOpacityLabel, 20, 180)
 
     dotOpacityLabel = ac.addLabel(settingsApp, "")
-    ac.setPosition(dotOpacityLabel, 20, 320)
+    ac.setPosition(dotOpacityLabel, 20, 220)
+
+
+    # -------------------------
+    # THEME
+    # -------------------------
     
-    #just in case theme switching doesnt work, you'd need to back out and go back in
-    restartLabel = ac.addLabel(
-        settingsApp,
-        "Theme changes may require restart"
-    )
-    ac.setPosition(restartLabel, 20, 225)
-
-    # -------------------------
-    # MAX ANGLE
-    # -------------------------
-
-    btn = ac.addButton(settingsApp, "-")
-    ac.setPosition(btn, 220, 20)
-    ac.setSize(btn, 30, 30)
-    ac.addOnClickedListener(btn, angle_minus)
-
-    btn = ac.addButton(settingsApp, "+")
-    ac.setPosition(btn, 260, 20)
-    ac.setSize(btn, 30, 30)
-    ac.addOnClickedListener(btn, angle_plus)
-
-    # -------------------------
-    # STEER SCALE
-    # -------------------------
-
-    btn = ac.addButton(settingsApp, "-")
-    ac.setPosition(btn, 220, 80)
-    ac.setSize(btn, 30, 30)
-    ac.addOnClickedListener(btn, scale_minus)
-
-    btn = ac.addButton(settingsApp, "+")
+    btn = ac.addButton(settingsApp, ">")
     ac.setPosition(btn, 260, 80)
     ac.setSize(btn, 30, 30)
-    ac.addOnClickedListener(btn, scale_plus)
+    ac.addOnClickedListener(btn, next_theme)
 
     # -------------------------
     # WINDOW SCALE
@@ -470,15 +431,15 @@ def setup_settings_ui():
     # BAR OPACITY
     # -------------------------
     barOpacityLabel = ac.addLabel(settingsApp, "")
-    ac.setPosition(barOpacityLabel, 20, 260)
+    ac.setPosition(barOpacityLabel, 20, 180)
 
     btn = ac.addButton(settingsApp, "-")
-    ac.setPosition(btn, 220, 260)
+    ac.setPosition(btn, 220, 180)
     ac.setSize(btn, 30, 30)
     ac.addOnClickedListener(btn, bar_opacity_minus)
 
     btn = ac.addButton(settingsApp, "+")
-    ac.setPosition(btn, 260, 260)
+    ac.setPosition(btn, 260, 180)
     ac.setSize(btn, 30, 30)
     ac.addOnClickedListener(btn, bar_opacity_plus)
 
@@ -486,26 +447,17 @@ def setup_settings_ui():
     # DOT OPACITY
     # -------------------------
     dotOpacityLabel = ac.addLabel(settingsApp, "")
-    ac.setPosition(dotOpacityLabel, 20, 320)
+    ac.setPosition(dotOpacityLabel, 20, 220)
 
     btn = ac.addButton(settingsApp, "-")
-    ac.setPosition(btn, 220, 320)
+    ac.setPosition(btn, 220, 220)
     ac.setSize(btn, 30, 30)
     ac.addOnClickedListener(btn, dot_opacity_minus)
 
     btn = ac.addButton(settingsApp, "+")
-    ac.setPosition(btn, 260, 320)
+    ac.setPosition(btn, 260, 220)
     ac.setSize(btn, 30, 30)
     ac.addOnClickedListener(btn, dot_opacity_plus)
-
-    # -------------------------
-    # THEME
-    # -------------------------
-    
-    btn = ac.addButton(settingsApp, ">")
-    ac.setPosition(btn, 260, 200)
-    ac.setSize(btn, 30, 30)
-    ac.addOnClickedListener(btn, next_theme)
 
     update_labels()
 
@@ -513,11 +465,13 @@ def setup_settings_ui():
 # MAIN
 # =========================================================
 
-
 def acMain(ac_version):
     global barApp
     global settingsApp
     global themeIndex
+
+    #grab steering lock first
+    load_steer_lock()
 
     #get config settings
     load_config()
@@ -553,7 +507,7 @@ def acMain(ac_version):
     #settings app window
     settingsApp = ac.newApp("Steer Bar Settings")
 
-    ac.setSize(settingsApp, 320, 400)
+    ac.setSize(settingsApp, 320, 280)
 
     setup_settings_ui()
 
@@ -572,6 +526,9 @@ def acUpdate(deltaT):
 
     #read steering input
     raw = ac.getCarState(0, acsys.CS.Steer)
+
+    #check if steering lock needs to be updated
+    update_steer_lock()
 
     #normalize using user-defined wheel rotation range
     steer = raw / USER_MAX_ANGLE
@@ -625,5 +582,6 @@ def onFormRender(deltaT):
     #save settings on shutdown
 def acShutdown():
 
+    #save user's current settings
     save_config()
     ac.log("Settings saved")
