@@ -1,5 +1,5 @@
 # Assetto Corsa Steering Bar
-A steering visualization application for Assetto Corsa. Allows users to see their current steering input relative to the maximum angle of their sim wheel or vehicle.
+A steering visualization application for Assetto Corsa. Allows users to see their current steering input relative to the maximum left-to-right steering lock of their vehicle
 
 ![Gif demonstrating the steering bar](https://github.com/Jam-BD011/Assetto-Corsa-Steering-Bar/blob/main/media/demogif.gif)
 
