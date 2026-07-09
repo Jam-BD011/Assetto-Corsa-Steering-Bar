@@ -4,8 +4,7 @@ A steering visualization application for Assetto Corsa. Allows users to see thei
 ![Gif demonstrating the steering bar](https://github.com/Jam-BD011/Assetto-Corsa-Steering-Bar/blob/main/media/demogif.gif)
 
 ## Features
-- Real-time steering angle visualization, relative to maximum steering angle (user defined)
-- Adjustable maximum angle and steering sensitivity scalar
+- Real-time steering angle visualization, relative to maximum steering angle
 - Adjustable hud size and opacity
 - Multiple theme support
 - Supports user-created themes
@@ -14,43 +13,45 @@ A steering visualization application for Assetto Corsa. Allows users to see thei
 
 ## Requirements
 - Assetto Corsa
-- [Assetto Corsa Content Manager](https://assettocorsa.club/content-manager.html) (Highly Recommended)
-- [Assetto Corsa Custom Shaders Patch](https://acstuff.club/patch/) (Highly Recommended)
+- [Assetto Corsa Content Manager](https://assettocorsa.club/content-manager.html)
+- [Assetto Corsa Custom Shaders Patch](https://acstuff.club/patch/)
 
 # Installation
-**⚠️Content Manager is _highly_ recommended!**
 
 1.) On the "Releases" page, download ``SteerBar.zip`` from the latest stable release
 
-2.) Drag-and-drop ``SteerBar.zip`` onto an open instance of Content Manager. Using the Content Management Section, Install ``SteerBar.zip``.
+2.) Drag-and-drop ``SteerBar.zip`` onto an open instance of Content Manager. Using the Content Management Section, Install both `steerget` (Lua App) and `SteerBar` (Python App)
+
+⚠️ _This app requires_  ***BOTH*** `steerget` _and_ `SteerBar` _to be installed in order to work correctly_!
 
 _Alternatively..._\
-_2.)_ Extract the content of SteerBar.zip anywhere. Move these contents to your Assetto Corsa Root folder, under ``assettocorsa/apps/python``. If you have the game through Steam, you can right-click on the game from you game list and select "_Manage_", then "_Browse Local Files_". This will take you to your Assetto Corsa root folder.
+_2.)_ Extract the content of SteerBar.zip anywhere. Move the `apps` folder to your Assetto Corsa Root folder. If you have the game through Steam, you can right-click on the game from you game list and select "_Manage_", then "_Browse Local Files_". This will take you to your Assetto Corsa root folder. Ensure that the `steerget` folder is within the `assettocorsa/apps/lua` folder, and that the `SteerBar` folder is within `assettocorsa/apps/python`
 
 3.) Within Content Manager, navigate to "_Settings_", and under "_Python Apps_", be sure that the checkbox next to "_Steer Bar_" is enabled.
 
 3.1) The settings under "_Python App Settings_" are **fallback values** that will ***only*** be used if the values found in `config.ini` cannot be found. 
 
-4.) Launch the game, and under "_All Apps_", find "_Steer Bar_" and click to enable. To adjust the bar settings, enable the "_Steer Bar Settings_" app. Follow the next section for setup help and tips!
+4.) Launch the game, and under "_All Apps_", find "_Steer Bar_" and click to enable. To adjust the bar settings, enable the "_Steer Bar Settings_" app. The app also includes a debugging screen that accompanies the Lua app, `Steer Bar Debug` that may be useful if you encounter issues. Follow the [In-game Setup & Settings](#in-game-setup--settings) section for setup and adjustment help!
 
-# In-game Setup, Settings, Tweaks
+## Updating
+It is not neccessary to remove older versions of the app before updating. You may still choose to do so if you wish! Otherwise...
+
+1.) On the "Releases" page, download ``SteerBar.zip`` from the latest stable release
+
+2.) Drag-and-drop ``SteerBar.zip`` onto an open instance of Content Manager. Using the Content Management Section, Install both apps. 
+
+_Alternatively..._\
+_2.)_ Extract the content of SteerBar.zip anywhere. Move the `apps` folder to your Assetto Corsa Root folder. Overwrite any files when prompted. You may also move the specific app folders to their paths within `assettocorsa/apps`. Place the `steerget` folder within the `assettocorsa/apps/lua` folder (overwrite files when prompted), and the `SteerBar` folder within `assettocorsa/apps/python` (overwrite files when prompted).
+
+
+# In-game Setup & Settings
 ![Screenshot of in-game settings windows](https://github.com/Jam-BD011/Assetto-Corsa-Steering-Bar/blob/main/media/SettingsMenu.png)
 
-***⚠️The app cannot automatically detect and update the max angle of the wheel or vehicle you're using. It will need to be changed manually if you want it to reflect the max angle of the car you're using! (with some exceptions)***
+The steering bar settings can be changed through the accompanied in-game app.
 
-The steering bar settings can be changed through the accomponied in-game app.
-
-- **Max Angle**: The maximum angle of the wheel you're using, or the maximum steering lock of the vehicle you're driving.
-    - If you're using a controller, I recommend a max angle of 1080 regardless of your vehicle.
-      - If you're using a keyboard; why?
-    - ***Can I use my sim wheel's max lock?*** Yes, however on vehicles that have _a lot more_ or _less_ max steering angle than the wheel you're using, it may not represent lock-to-lock representation correctly. Generally, for vehicles that have _roughly_ the same max rotation as your physical wheel, the difference isn't too jarring.
-    - ***What if I don't know the vehicle's max lock?*** No worries! It's easy to quickly find out:
-      - Turn your wheel left/right towards lock, and watch the dot move as you do so:
-        - If the dot _doesn't_ reach the far left/right of the bar but your wheel or car is at it's max lock, you can ***decrease*** the **Max Angle** until the dot moves slightly. Increase by a small value (+10) from there. Alternatively, you can also ***increase*** the **Steer Scale** value.
-        - If the dot reaches the far left/right of the bar _before_ your wheel or the car hits max lock, you can ***increase*** the **Max Angle** until the dot moves slightly. Decrease by a small value (-10) from there. Alternatively, you can also ***decrease*** the **Steer Scale** value.
-- **Steer Scale**: Scalar for dot movement. An alternate option to adjusting the **Max Angle**. Slightly less precise, but more convenient. Default is `2.0`.
-- **HUD Scale**: Scale of both the bar and the dot. Adjust to fit your preference. Default is `1.0`.
-- **Theme**: Name of the current theme used. the the arrow to cycle between themes. If you add new themes while the game is running, you may need to restart your game for them to appear.
+- **Max Angle**: The maximum rotational lock-to-lock angle of the vehicle you're using.
+- **Theme**: Name of the current theme used. Use the the arrow to cycle between themes. If you add new themes while the game is running, you _may_ need to restart your game for them to appear.
+- **HUD Scale**: Scale of app window. Adjust to fit your preference. Default is `1.0`.
 - **Bar Opacity**: Option to change the opacity of the bar. Default is `1.0`.
 - **Dot Opacity**: Option to change the opacity of the dot. Default is `1.0`.
 
@@ -76,15 +77,19 @@ It is possible to make your own bar and dot for this mod! The process is easy.
 If done correctly, your new folder should only contain `bar.png` and `dot.png`. Head in-game and open the `Steer Bar Settings` app and find your new theme! 
 
 ## How's it Work?
-The app uses "User max angle" to define the maximum steering angle from lock-to-lock, either of the sim wheel you're physcially using, or the vehicle you're driving. A dot is placed where your steering input currently is, relative to the maximum angle. The closer you are to your wheel lock left/right, the closer the dot will be to the edge of the bar. 
+The "bar" represents the maximum left and right steering value a car has. The "dot" represents where your current steering input is, relative to your left/right lock. The `steerget` Lua app utilizes the Custom Shaders Patch's Lua SDK to write the user's vehicle's steering lock to a text file. This file then gets read by the `Steer Bar` Python app, and utilizes the written value to determine the maximum steering lock for the vehicle, and how far the dot should travel along the bar in relation to the specified maximum.
 
-***⚠️Once again, the app cannot automatically detect and update the max angle of the wheel or vehicle you're using. It will need to be changed manually for each car to most accurately reflect the lock-to-lock value.***
+Previously, this app worked by utilizing a user-defined maximum steering angle to define dot-travel behavior. This was a reasonable solution for the now older `ac` and `acsys` Python Libraries not supporting being able to return a vehicle's maximum steering lock. I was satisfied with this until I discovered [zibed1991's Steering Indicator](https://www.overtake.gg/downloads/xsteer_indicator.84656/). I noticed that their app provided another way to visualize steering input, but was much easier to setup and use than mine. No need to adjust max angles or movement scalars, it worked for every vehicle, every time. This led me to discover the Custom Shaders Patch Lua SDK: a modern and supremely robust Lua Library for creating Lua apps for Assetto Corsa. Using this new knowledge, I decided to incorporate a Lua "companion" app (the `steerget` app) that could finally solve my biggest issue with my Python app without needing to migrate the project entirely to Lua.
 
-This is a small limitation with the ac and acsys Python Libraries, as well as the Assetto Corsa Shared Memory library. None of these have the ability to retrieve the maximum steering angle from the vehicle you're using.\
-**However...**\
-Custom Shader's Patch's Lua SDK _does_ come with a way to retrieve steering lock. Big shoutout to [zibed1991's Steering Indicator](https://www.overtake.gg/downloads/xsteer_indicator.84656/) app for giving me the inspiration and helping me discover the Lua SDK. Be sure to check out their app too, and stay tuned for an important update for this app later!
+Again, huge thanks to [zibed1991's Steering Indicator](https://www.overtake.gg/downloads/xsteer_indicator.84656/) app from Overtake.gg for giving me the inspiration and helping me discover the Lua SDK. Please be sure to check out their app too!!
 
 ## Update Log
+***8th July 2026***
+- **NEW:** Added `steerget` Lua companion app for retrieving vehicle steering lock
+- **NEW:** Added a new theme
+- **FIX:** HUD scale now correctly switches between all available scale values.
+    - Fixed a small issue where HUD scale could become stuck on values ending in `.05` due to the previously-set minimum
+ 
 ***28th June 2026***
 - **FIX:** App window size now properly scales with bar & dot scale
 
